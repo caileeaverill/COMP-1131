@@ -41,25 +41,46 @@ public class numberGuessingGame {
 
       System.out.println("Random letter: " + randomLetter);
 
-      int tries = 0;
-
       for (int i = 0; i < numOfGuesses; numOfGuesses--) {
+        int tries = 0;
+
         if (guessChar == randomLetter) {
           Congratulations();
           break;
         } else if (guessChar != randomLetter) {
-
           do {
             System.out.println("Wrong! Please try again!");
+            System.out.println("You have " + numOfGuesses + "guesses left");
             System.out.print("Enter a character: ");
             guess = scanner.nextLine();
+            if (!guess.matches("[a-zA-Z]+\\.?")) {
+                System.out.println("Error: invalid character");
+              continue;
+            }
             guessChar = guess.charAt(0);
             tries++;
-            System.out.println(tries);
-          } while (tries < 3);
 
-          if (tries > 3) {
+            int comparison = comparison(guessChar, randomLetter);
+
+            if (comparison > 0) {
+              System.out.println("Guess too high");
+            } else if (comparison < 0) {
+              System.out.println("Guess too low");
+            } else {
+              Congratulations();
+              return;
+            }
+          } while (tries < 2);
+
+          if (tries >= 2) {
+            System.out.flush();
             System.out.println("Keep playing?");
+            System.out.print("Do you want to play again?(y/n)");
+            String answer = scanner.nextLine();
+            if (answer.equals("n")) {
+            System.out.println("Thanks for playing!");
+              System.exit(0);
+            }
           }
         } else if (guessChar != randomLetter || numOfGuesses >= 0) {
           Loser(randomLetter);
@@ -69,5 +90,9 @@ public class numberGuessingGame {
       System.out.println("Error: invalid character");
       runGame();
     }
+  }
+
+  public static int comparison(int guessChar, int randomLetter) {
+    return guessChar - randomLetter;
   }
 }
